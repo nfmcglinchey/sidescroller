@@ -32,7 +32,7 @@ bossSprite.src = "Character sprites/boss.png";
 let gameState = "TITLE"; // TITLE, PLAYING, GAME_OVER, LEVEL_COMPLETE
 const GRAVITY = 0.4;
 const FRICTION = 0.92;
-const worldWidth = 8000; // Level is now 4x longer
+let worldWidth = 8000;  // UPDATED: Changed from const to let to allow updating for level 2
 let cameraX = 0;
 
 /*********************************
@@ -372,6 +372,9 @@ window.addEventListener('keydown', (e) => {
     // Push [Enter] to Continue: load level 2 using loadLevel2 from level2.js
     const level2Data = loadLevel2(player, canvas);
 
+    // UPDATED: Update worldWidth to match level 2 configuration
+    worldWidth = level2Data.worldWidth;
+
     // Update platforms based on level2 configuration
     platforms.length = 0;
     level2Data.platforms.forEach(pl => {
@@ -412,7 +415,7 @@ window.addEventListener('keydown', (e) => {
     player.x = level2Data.playerStart.x;
     player.y = level2Data.playerStart.y;
 
-    // Update level label and change background image for level 2
+    // Update level label and background image for level 2
     document.getElementById('level').innerText = 'Level 2';
     document.getElementById('game-container').style.backgroundImage = "url('Landscapes/Brekon-Beacons.png')";
 
