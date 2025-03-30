@@ -22,7 +22,7 @@ html, body {
 #game-container {
   text-align: center;
   background: url('Landscapes/arctic.png') repeat-x bottom;
-  background-size: 1600px 100%;
+  background-size: 8000px 100%;
   position: absolute;
   width: 800px;
   height: 400px;
