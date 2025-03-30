@@ -22,7 +22,7 @@ function loadLevel2(player, canvas) {
       { x: 2000 * 4, y: canvas.height - 50, type: 'chaser', health: 2, speed: 2.0 },
       { x: 2600 * 4, y: canvas.height - 50, type: 'patrol', health: 2, speed: 2.0 },
     ],
-    boss: { x: 4500 * 4, y: canvas.height - 80, health: 5 },
+    boss: { x: 4500 * 4, y: canvas.height - 80, health: 3 },
     powerUps: [
       { x: 700 * 4, y: 300, type: 'life' },
       { x: 1500 * 4, y: 250, type: 'invincibility' },
