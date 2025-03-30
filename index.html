@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>24-Bit Platformer - Level One</title>
+  <!-- Google Fonts (Press Start 2P) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Game Wrapper: fixed logical dimensions with overflow hidden -->
+  <div id="game-wrapper">
+    <div id="game-container">
+      <!-- Stats / HUD -->
+      <div id="stats">
+        <span id="lives">Lives: 3</span>
+        &nbsp;|&nbsp;
+        <span id="keys">Keys: 0</span>
+        &nbsp;|&nbsp;
+        <span id="level">Level 1</span>
+        &nbsp;|&nbsp;
+        <span id="message"></span>
+      </div>
+
+      <!-- Main canvas -->
+      <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+      <!-- Audio (looped) - Replace src with your own track if desired -->
+      <audio id="bgMusic" src="chiptune.mp3" loop></audio>
+
+      <!-- Title Screen Overlay -->
+      <div id="title-screen">
+        <h1>24-Bit Platformer</h1>
+        <p>Press [Enter] to Start</p>
+      </div>
+
+      <!-- Game Over Screen -->
+      <div id="game-over-screen">
+        <h1>Game Over</h1>
+        <p>Press [Enter] to Retry</p>
+      </div>
+
+      <!-- Level Complete Screen -->
+      <div id="level-complete-screen">
+        <h1>Level Complete!</h1>
+        <p>Push [Enter] to Continue</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load level2.js first so that loadLevel2 is available globally -->
+  <script src="level2.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
