@@ -21,7 +21,7 @@ html, body {
 /* Game container: holds your side-scrolling background and canvas */
 #game-container {
   text-align: center;
-  background: url('Landscapes/arctic.png') repeat-x bottom;
+  background: url('Landscapes/Arctic.png') repeat-x bottom;
   background-size: 8000px 100%;
   position: absolute;
   width: 800px;
