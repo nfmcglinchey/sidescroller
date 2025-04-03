@@ -32,8 +32,9 @@ bossSprite.src = "Character sprites/boss.png";
 let gameState = "TITLE"; // TITLE, PLAYING, GAME_OVER, LEVEL_COMPLETE
 const GRAVITY = 0.4;
 const FRICTION = 0.92;
-let worldWidth = 8000;  // UPDATED: Changed from const to let to allow updating for level 2
+let worldWidth = 8000;  // Changed from const to let so it can be updated per level
 let cameraX = 0;
+let currentLevel = 1;   // Tracks the current level: 1 for Level1, 2 for Level2, etc.
 
 /*********************************
  * Player Class
@@ -159,6 +160,23 @@ class Player {
     ctx.drawImage(playerSprite, this.x, this.y, this.width, this.height);
   }
 }
+
+let cheatInput = "";
+window.addEventListener("keydown", (e) => {
+  cheatInput += e.key.toLowerCase();
+  if (cheatInput.includes("flash")) {
+    // Activate cheat: invincible for the entire level.
+    player.invFromPowerUp = true;
+    // Set a very high timer so it doesn't expire during the level.
+    player.invPowerTimer = 9999999;
+    cheatInput = ""; // Reset the cheat input
+    console.log("Cheat activated: invincibility enabled for this level.");
+  }
+  // Limit buffer length to avoid overflow.
+  if (cheatInput.length > 10) {
+    cheatInput = cheatInput.slice(-10);
+  }
+});
 
 /*********************************
  * Platform Class
@@ -369,57 +387,119 @@ window.addEventListener('keydown', (e) => {
   } else if (gameState === "GAME_OVER" && e.code === 'Enter') {
     resetGame();
   } else if (gameState === "LEVEL_COMPLETE" && e.code === 'Enter') {
-    // Push [Enter] to Continue: load level 2 using loadLevel2 from level2.js
-    const level2Data = loadLevel2(player, canvas);
-
-    // UPDATED: Update worldWidth to match level 2 configuration
-    worldWidth = level2Data.worldWidth;
-
-    // Update platforms based on level2 configuration
+    // Level transition logic for advancing from level 1 to 12.
+    let levelData;
+    switch (currentLevel) {
+      case 1:
+        levelData = loadLevel2(player, canvas);
+        currentLevel = 2;
+        document.getElementById('level').innerText = 'Level 2';
+        document.getElementById('game-container').style.backgroundImage = "url('Landscapes/Brekon-Beacons.png')";
+        break;
+      case 2:
+        levelData = loadLevel3(player, canvas);
+        currentLevel = 3;
+        document.getElementById('level').innerText = 'Level 3';
+        document.getElementById('game-container').style.backgroundImage = "url('Landscapes/Montenegro.png')";
+        break;
+      case 3:
+        levelData = loadLevel4(player, canvas);
+        currentLevel = 4;
+        document.getElementById('level').innerText = 'Level 4';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      case 4:
+        levelData = loadLevel5(player, canvas);
+        currentLevel = 5;
+        document.getElementById('level').innerText = 'Level 5';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      case 5:
+        levelData = loadLevel6(player, canvas);
+        currentLevel = 6;
+        document.getElementById('level').innerText = 'Level 6';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      case 6:
+        levelData = loadLevel7(player, canvas);
+        currentLevel = 7;
+        document.getElementById('level').innerText = 'Level 7';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      case 7:
+        levelData = loadLevel8(player, canvas);
+        currentLevel = 8;
+        document.getElementById('level').innerText = 'Level 8';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      case 8:
+        levelData = loadLevel9(player, canvas);
+        currentLevel = 9;
+        document.getElementById('level').innerText = 'Level 9';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      case 9:
+        levelData = loadLevel10(player, canvas);
+        currentLevel = 10;
+        document.getElementById('level').innerText = 'Level 10';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      case 10:
+        levelData = loadLevel11(player, canvas);
+        currentLevel = 11;
+        document.getElementById('level').innerText = 'Level 11';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      case 11:
+        levelData = loadLevel12(player, canvas);
+        currentLevel = 12;
+        document.getElementById('level').innerText = 'Level 12';
+        document.getElementById('game-container').style.backgroundImage = levelData.background ? "url('" + levelData.background + "')" : "";
+        break;
+      default:
+        // If level 12 is complete, end the game or show a victory screen.
+        gameState = "GAME_OVER";
+        document.getElementById('game-over-screen').style.visibility = 'visible';
+        bgMusic.pause();
+        return;
+    }
+    
+    // Update global game settings and entities based on levelData.
+    worldWidth = levelData.worldWidth;
+    
     platforms.length = 0;
-    level2Data.platforms.forEach(pl => {
+    levelData.platforms.forEach(pl => {
       platforms.push(new Platform(pl.x, pl.y, pl.width, pl.height, pl.type));
     });
-
-    // Update enemies
+    
     enemies.length = 0;
-    level2Data.enemies.forEach(en => {
+    levelData.enemies.forEach(en => {
       let enemy = new Enemy(en.x, canvas.height - 50, en.type);
       enemy.health = en.health;
       enemy.speed = en.speed;
       enemies.push(enemy);
     });
-
-    // Update boss
-    boss.x = level2Data.boss.x;
-    boss.y = level2Data.boss.y;
-    boss.health = level2Data.boss.health;
+    
+    boss.x = levelData.boss.x;
+    boss.y = levelData.boss.y;
+    boss.health = levelData.boss.health;
     boss.alive = true;
-
-    // Update power-ups
+    
     powerUps.length = 0;
-    level2Data.powerUps.forEach(pu => {
+    levelData.powerUps.forEach(pu => {
       powerUps.push(new PowerUp(pu.x, pu.y, pu.type));
     });
-
-    // Update hoverboard
-    hoverboard.x = level2Data.hoverboard.x;
-    hoverboard.y = level2Data.hoverboard.y;
+    
+    hoverboard.x = levelData.hoverboard.x;
+    hoverboard.y = levelData.hoverboard.y;
     hoverboard.active = true;
     hoverboard.attached = false;
-
-    // Update door
-    door = new Door(level2Data.door.x, level2Data.door.y, level2Data.door.width, level2Data.door.height);
-
-    // Update player starting position for level 2
-    player.x = level2Data.playerStart.x;
-    player.y = level2Data.playerStart.y;
-
-    // Update level label and background image for level 2
-    document.getElementById('level').innerText = 'Level 2';
-    document.getElementById('game-container').style.backgroundImage = "url('Landscapes/Brekon-Beacons.png')";
-
-    // Hide the level complete screen and resume gameplay.
+    
+    door = new Door(levelData.door.x, levelData.door.y, levelData.door.width, levelData.door.height);
+    
+    player.x = levelData.playerStart.x;
+    player.y = levelData.playerStart.y;
+    
     document.getElementById('level-complete-screen').style.visibility = 'hidden';
     gameState = "PLAYING";
   }
